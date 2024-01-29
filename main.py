@@ -3,11 +3,13 @@ from random import randint
 from enemy import Enemy
 
 pygame.init()
+from game import game_over
 
 WIDTH, HEIGHT = 417, 626
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bang")
+font = pygame.font.Font('freesansbold.ttf', 32)
 
 
 player = {
@@ -61,6 +63,8 @@ while running:
         if e.y > 626:
             enemies.remove(e)
             del e
+        elif e.y > player["y"] and e.y < player["y"]+101 and e.x > player["x"] and e.x < player["x"]+84:
+            game_over(font, WIDTH, HEIGHT, screen)
 
     # Draw
     screen.blit(background, (0,0))
@@ -69,4 +73,4 @@ while running:
         screen.blit(enemy_image, (e.x, e.y))
     pygame.display.flip()
 
-pygame.quit()
+# pygame.quit()
