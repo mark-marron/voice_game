@@ -1,4 +1,6 @@
 import pygame
+from random import randint
+from enemy import Enemy
 
 pygame.init()
 
@@ -6,7 +8,7 @@ WIDTH, HEIGHT = 417, 626
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bang")
-background = pygame.image.load("assets/background.png")
+
 
 player = {
     "x": WIDTH/2 - 42,
@@ -15,7 +17,19 @@ player = {
     "image": "assets/spaceship.png"
 }
 
+enemy = {
+    "x": 0,
+    "y": 0,
+    "speed": 2,
+    "image": "assets/asteroid.png"
+}
+
+enemies = []
+
+
 player_image = pygame.image.load(player["image"]).convert_alpha()
+background = pygame.image.load("assets/background.png")
+enemy_image = pygame.image.load(enemy["image"]).convert_alpha()
 
 running = True
 while running:
@@ -37,9 +51,22 @@ while running:
     elif player["x"] > WIDTH - 84:
         player["x"] = WIDTH - 84
 
+    # Add enemies
+    if randint(1, 60) == 27:
+        enemies.append(Enemy(randint(20,400), -100))
+
+    # Enemy Movement
+    for e in enemies:
+        e.y += e.speed
+        if e.y > 626:
+            enemies.remove(e)
+            del e
+
     # Draw
     screen.blit(background, (0,0))
     screen.blit(player_image, (player["x"], player["y"]))
+    for e in enemies:
+        screen.blit(enemy_image, (e.x, e.y))
     pygame.display.flip()
 
 pygame.quit()
