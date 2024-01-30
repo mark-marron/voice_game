@@ -1,6 +1,7 @@
 import pygame
 from random import randint
 from enemy import Enemy
+from bullet import Bullet
 
 pygame.init()
 from game import game_over
@@ -16,22 +17,18 @@ player = {
     "x": WIDTH/2 - 42,
     "y": HEIGHT-HEIGHT/5,
     "speed": 2,
+    "cooldown": 60,
     "image": "assets/spaceship.png"
 }
 
-enemy = {
-    "x": 0,
-    "y": 0,
-    "speed": 2,
-    "image": "assets/asteroid.png"
-}
-
 enemies = []
+bullets = []
 
 
 player_image = pygame.image.load(player["image"]).convert_alpha()
 background = pygame.image.load("assets/background.png")
-enemy_image = pygame.image.load(enemy["image"]).convert_alpha()
+enemy_image = pygame.image.load("assets/asteroid.png").convert_alpha()
+bullet_image = pygame.image.load("assets/bullet.png").convert_alpha()
 
 running = True
 while running:
@@ -47,6 +44,9 @@ while running:
         player["x"] -= player["speed"]
     if keys[pygame.K_RIGHT]:
         player["x"] += player["speed"]
+    if keys[pygame.K_SPACE] and player["cooldown"] == 0:
+        player["cooldown"] = 60
+        bullets.append(Bullet(player["x"]+38, player["y"]))
 
     if player["x"] < 0:
         player["x"] = 0
@@ -60,17 +60,29 @@ while running:
     # Enemy Movement
     for e in enemies:
         e.y += e.speed
-        if e.y > 626:
+        # if e.y > player["y"] and e.y < player["y"]+101 and e.x > player["x"]+10 and e.x < player["x"]+74:
+        #     game_over(font, WIDTH, HEIGHT, screen)
+        if e.collided_with(bullets):
+            print("collision")
             enemies.remove(e)
-            del e
-        elif e.y > player["y"] and e.y < player["y"]+101 and e.x > player["x"] and e.x < player["x"]+84:
-            game_over(font, WIDTH, HEIGHT, screen)
+
+        # remove old enemies
+        elif e.y > 626:
+            enemies.remove(e)
+
+    # Shooting
+    if player["cooldown"] != 0:
+        player["cooldown"] -= 1
+    for b in bullets:
+        b.y -= b.speed
 
     # Draw
     screen.blit(background, (0,0))
     screen.blit(player_image, (player["x"], player["y"]))
     for e in enemies:
         screen.blit(enemy_image, (e.x, e.y))
+    for b in bullets:
+        screen.blit(bullet_image, (b.x, b.y))
     pygame.display.flip()
 
 # pygame.quit()

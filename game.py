@@ -8,7 +8,7 @@ def game_over(font, width, height, screen):
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        text = font.render('Game Over', True, (0, 255, 0), (0, 0, 128))
+        text = font.render('Game Over', True, (255, 255, 255), (0, 0, 0))
         textRect = text.get_rect()
         textRect.center = (width // 2, height // 2)
         screen.blit(text, textRect)
