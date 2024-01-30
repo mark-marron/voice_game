@@ -60,10 +60,11 @@ while running:
     # Enemy Movement
     for e in enemies:
         e.y += e.speed
-        # if e.y > player["y"] and e.y < player["y"]+101 and e.x > player["x"]+10 and e.x < player["x"]+74:
-        #     game_over(font, WIDTH, HEIGHT, screen)
-        if e.collided_with(bullets):
-            print("collision")
+        if e.y > player["y"] and e.y < player["y"]+40 and e.x > player["x"]+10 and e.x < player["x"]+74:
+            game_over(font, WIDTH, HEIGHT, screen)
+        collision_response = e.collided_with(bullets)
+        if collision_response[0]:
+            bullets.pop(collision_response[1])
             enemies.remove(e)
 
         # remove old enemies
@@ -75,6 +76,8 @@ while running:
         player["cooldown"] -= 1
     for b in bullets:
         b.y -= b.speed
+        if b.y < -100:
+            bullets.remove(b)
 
     # Draw
     screen.blit(background, (0,0))
